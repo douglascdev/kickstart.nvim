@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -101,8 +101,7 @@ vim.g.have_nerd_font = false
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -168,6 +167,12 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+vim.keymap.set('n', '<C-s>', '<Esc>:w<CR>', { desc = 'Save file' })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Move down, center on screen' })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Move up, Center on screen' })
+vim.keymap.set('n', 'n', 'nzzzv', { desc = 'Search, center on screen' })
+vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Search back, center on screen' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -698,6 +703,9 @@ require('lazy').setup({
             },
           },
         },
+
+        gopls = {},
+        clangd = {},
       }
 
       -- Ensure the servers and tools above are installed
