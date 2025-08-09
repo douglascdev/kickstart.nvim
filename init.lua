@@ -179,7 +179,7 @@ vim.keymap.set('n', 'N', 'Nzzzv', { desc = 'Search back, center on screen' })
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.setloclist, { desc = '[D]iagnostic quickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -209,6 +209,39 @@ vim.keymap.set('n', '<M-h>', '<C-w>H', { desc = 'Move window to the left' })
 vim.keymap.set('n', '<M-l>', '<C-w>L', { desc = 'Move window to the right' })
 vim.keymap.set('n', '<M-j>', '<C-w>J', { desc = 'Move window to the lower' })
 vim.keymap.set('n', '<M-k>', '<C-w>K', { desc = 'Move window to the upper' })
+
+vim.keymap.set('n', '<leader>t', function()
+  vim.cmd 'new'
+  vim.cmd 'terminal'
+  vim.cmd 'wincmd J'
+  vim.cmd 'resize 10'
+end, { desc = 'Terminal' })
+-- maps the Esc key in terminal mode ('t') to exit terminal insert mode and return to normal mode within the terminal window.
+vim.api.nvim_create_autocmd('TermOpen', {
+  pattern = '*',
+  callback = function()
+    vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true, desc = 'Exit Terminal Insert Mode' })
+    -- Add more terminal-specific keymaps here, e.g., for navigation
+    -- vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { noremap = true, silent = true, desc = 'Move to Left Split' })
+  end,
+})
+
+vim.keymap.set('n', '<leader>s', vim.diagnostic.setloclist, { desc = '[S]ession persistence' })
+vim.keymap.set('n', '<leader>ss', function()
+  require('persistence').load()
+end, { desc = 'Load the session for the current directory' })
+--
+vim.keymap.set('n', '<leader>sS', function()
+  require('persistence').select()
+end, { desc = 'Select a session to load' })
+--
+vim.keymap.set('n', '<leader>sl', function()
+  require('persistence').load { last = true }
+end, { desc = 'Load the last session' })
+--
+vim.keymap.set('n', '<leader>sd', function()
+  require('persistence').stop()
+end, { desc = 'Stop Persistence => session wont be saved on exit' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -365,8 +398,8 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
+        { '<leader>f', group = '[F]ind' },
+        { '<leader>s', group = '[S]ession' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -447,16 +480,20 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
+      vim.keymap.set('n', '<leader>fk', builtin.keymaps, { desc = '[F]ind [K]eymaps' })
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]ind [F]iles' })
+      vim.keymap.set('n', '<leader>fs', builtin.builtin, { desc = '[F]ind [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = '[F]ind current [W]ord' })
+      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = '[F]ind by [G]rep' })
+      vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = '[F]ind [D]iagnostics' })
+      vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[F]ind [R]esume' })
+      vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = '[F]ind Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>sd', function()
+        require('persistence').stop()
+      end, { desc = 'Stop Persistence => session wont be saved on exit' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -469,18 +506,22 @@ require('lazy').setup({
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', '<leader>s/', function()
+      vim.keymap.set('n', '<leader>f/', function()
         builtin.live_grep {
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch [/] in Open Files' })
+      end, { desc = '[F]ind [/] in Open Files' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
+      end, { desc = '[F]ind [N]eovim files' })
     end,
+  },
+
+  {
+    'mfussenegger/nvim-dap',
   },
 
   {
@@ -661,16 +702,6 @@ require('lazy').setup({
               end,
             })
           end
-
-          -- The following code creates a keymap to toggle inlay hints in your
-          -- code, if the language server you are using supports them
-          --
-          -- This may be unwanted, since they displace some of your code
-          if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>th', function()
-              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
-          end
         end,
       })
 
@@ -791,16 +822,7 @@ require('lazy').setup({
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
-    keys = {
-      {
-        '<leader>f',
-        function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
-        end,
-        mode = '',
-        desc = '[F]ormat buffer',
-      },
-    },
+    keys = {},
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
