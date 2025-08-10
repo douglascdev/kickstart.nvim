@@ -401,7 +401,7 @@ require('lazy').setup({
         { '<leader>d', group = '[D]ebug' },
         { '<leader>f', group = '[F]ind' },
         { '<leader>s', group = '[S]ession' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it Hunk', mode = { 'n', 'v' } },
       },
     },
   },
