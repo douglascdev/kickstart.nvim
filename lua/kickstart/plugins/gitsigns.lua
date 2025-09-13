@@ -8,6 +8,7 @@ return {
     opts = {
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
+        vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#00ff00' })
 
         local function map(mode, l, r, opts)
           opts = opts or {}
