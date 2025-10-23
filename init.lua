@@ -354,6 +354,8 @@ require('lazy').setup({
     },
   },
 
+  'folke/persistence',
+
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
