@@ -354,7 +354,13 @@ require('lazy').setup({
     },
   },
 
-  'folke/persistence',
+  {
+    'folke/persistence.nvim',
+    event = 'BufReadPre', -- this will only start session saving when an actual file was opened
+    opts = {
+      -- add any custom options here
+    },
+  },
 
   -- NOTE: Plugins can specify dependencies.
   --
@@ -441,6 +447,12 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = '[R]esume' })
       vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = 'Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      -- Session
+      -- load the session for the current directory
+      vim.keymap.set('n', '<leader>s', function()
+        require('persistence').load()
+      end, { desc = '[S]ession load' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
