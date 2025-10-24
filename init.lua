@@ -120,7 +120,11 @@ end)
 
 -- Enable break indent
 vim.o.breakindent = true
-vim.o.smartindent = true
+vim.o.expandtab = true -- Convert tabs to spaces
+vim.o.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
+vim.o.softtabstop = 4 -- Number of spaces a <Tab> counts for while performing editing operations
+vim.o.autoindent = true -- Indent a new line the same amount as the line just typed
+vim.o.smartindent = true -- Smart indentation with braces
 
 -- Save undo history
 vim.o.undofile = true
@@ -348,6 +352,7 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>f', group = '[F]ind' },
+        { '<leader>s', group = '[S]ession' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
@@ -450,9 +455,24 @@ require('lazy').setup({
 
       -- Session
       -- load the session for the current directory
-      vim.keymap.set('n', '<leader>s', function()
+      vim.keymap.set('n', '<leader>ss', function()
         require('persistence').load()
-      end, { desc = '[S]ession load' })
+      end, { desc = '[s]ession for the current dir' })
+
+      -- select a session to load
+      vim.keymap.set('n', '<leader>sw', function()
+        require('persistence').select()
+      end, { desc = '[w]hich session to load' })
+
+      -- load the last session
+      vim.keymap.set('n', '<leader>sl', function()
+        require('persistence').load { last = true }
+      end, { desc = '[l]ast session' })
+
+      -- stop Persistence => session won't be saved on exit
+      vim.keymap.set('n', '<leader>sd', function()
+        require('persistence').stop()
+      end, { desc = "[d]on't save this session" })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
