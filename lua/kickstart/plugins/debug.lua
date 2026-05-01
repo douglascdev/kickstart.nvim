@@ -23,6 +23,9 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+
+    -- java
+    'mfussenegger/nvim-jdtls',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
@@ -95,6 +98,9 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'cpptools',
+        'java-debug-adapter',
+        'java-test',
       },
     }
 
@@ -135,6 +141,16 @@ return {
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+    dap.configurations.java = {
+      {
+        type = 'java',
+        request = 'launch',
+        name = 'Debug (Launch) - Current File',
+        mainClass = '${file}', -- This tells it to just try the current file
+        projectName = 'temp-project',
+      },
+    }
 
     -- Install golang specific config
     require('dap-go').setup {
