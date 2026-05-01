@@ -102,7 +102,7 @@ vim.g.have_nerd_font = true
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -120,6 +120,11 @@ end)
 
 -- Enable break indent
 vim.o.breakindent = true
+vim.o.expandtab = true -- Convert tabs to spaces
+vim.o.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent
+vim.o.softtabstop = 4 -- Number of spaces a <Tab> counts for while performing editing operations
+vim.o.autoindent = true -- Indent a new line the same amount as the line just typed
+vim.o.smartindent = true -- Smart indentation with braces
 
 -- Save undo history
 vim.o.undofile = true
@@ -151,6 +156,7 @@ vim.o.splitbelow = true
 --   and `:help lua-options-guide`
 vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.tabstop = 4
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -233,7 +239,6 @@ end
 ---@type vim.Option
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
-
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
