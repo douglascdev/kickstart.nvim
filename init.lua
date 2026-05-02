@@ -270,37 +270,6 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'milanglacier/minuet-ai.nvim',
-    config = function()
-      require('minuet').setup {
-        provider = 'openai_fim_compatible',
-          request_timeout = 10000,
-          n_completions = 1, -- recommend for local model for resource saving
-          -- I recommend beginning with a small context window size and incrementally
-          -- expanding it, depending on your local computing power. A context window
-          -- of 512, serves as an good starting point to estimate your computing
-          -- power. Once you have a reliable estimate of your local computing power,
-          -- you should adjust the context window to a larger value.
-          context_window = 512,
-          provider_options = {
-            openai_fim_compatible = {
-              -- For Windows users, TERM may not be present in environment variables.
-              -- Consider using APPDATA instead.
-              api_key = 'TERM',
-              name = 'Ollama',
-              end_point = 'http://localhost:11434/v1/completions',
-              model = 'qwen2.5-coder:7b',
-              optional = {
-                  max_tokens = 56,
-                  top_p = 0.9,
-              },
-            },
-          },
-      }
-    end,
-    },
-
   -- NOTE: Plugins can be added via a link or github org/name. To run setup automatically, use `opts = {}`
 
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
@@ -835,17 +804,6 @@ require('lazy').setup({
     ---@type blink.cmp.Config
     opts = {
       keymap = {
-        ['<C-a>'] = {
-          function(cmp)
-            -- This check prevents the "module not found" error during startup
-            local status, minuet = pcall(require, 'minuet')
-            if status then
-              cmp.show({ providers = { 'minuet' } })
-            else
-              vim.notify("Minuet not loaded yet!", vim.log.levels.WARN)
-            end
-          end,
-        },
         -- 'default' (recommended) for mappings similar to built-in completions
         --   <c-y> to accept ([y]es) the completion.
         --    This will auto-import if your LSP supports it.
@@ -883,22 +841,10 @@ require('lazy').setup({
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = false, auto_show_delay_ms = 500 },
-        trigger = { prefetch_on_insert = false }
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'minuet' },
-        providers = {
-          minuet = {
-            name = 'minuet',
-            module = 'minuet.blink',
-            async = true,
-            -- Should match minuet.config.request_timeout * 1000,
-            -- since minuet.config.request_timeout is in seconds
-            timeout_ms = 3000,
-            score_offset = 50, -- Gives minuet higher priority among suggestions
-          },
-        }
+        default = { 'lsp', 'path', 'snippets' },
       },
 
       snippets = { preset = 'luasnip' },
